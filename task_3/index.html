@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>AJAX</title>
+</head>
+<body>
+  <input type="number" id="numberInput" placeholder="Введите число от 1 до 10">
+  <button id="submitButton">Ввод</button>
+  <div id="result"></div>
+  <script>
+    document.getElementById('submitButton').addEventListener('click', function() {
+        const inputNumber = document.getElementById('numberInput').value;
+    
+        if (inputNumber < 1 || inputNumber > 10) {
+            document.getElementById('result').innerText = 'Число вне диапазона от 1 до 10';
+        } else {
+            const xhr = new XMLHttpRequest();
+            const url = `https://jsonplaceholder.typicode.com/photos?_limit=${inputNumber}`;
+    
+            xhr.open('GET', url, true);
+    
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    const data = JSON.parse(xhr.responseText);
+                    displayData(data);
+                } else {
+                    document.getElementById('result').innerText = 'Ошибка получения данных';
+                }
+            };
+    
+            xhr.onerror = function() {
+                document.getElementById('result').innerText = 'Ошибка получения данных.';
+            };
+    
+            xhr.send();
+        }
+    });
+    
+    function displayData(data) {
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = ''; // Очистить предыдущие результаты
+    
+        data.forEach(function(photo) {
+            const img = document.createElement('img');
+            img.src = photo.url;
+            img.alt = photo.title;
+            resultDiv.appendChild(img);
+        });
+    }
+    </script>
+</body>
+</html>
